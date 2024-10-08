@@ -10,5 +10,9 @@ pythonpath = [
 ]
 
 
+[tool.ruff]
+# Assume Python 3.12
+target-version = "py39"
+
 [tool.ruff.lint]
 select = ["ALL"]
