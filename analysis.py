@@ -20,6 +20,49 @@ class HistogramResults:
     def interp_distr(self) -> Callable:
         return np.interp(self.centers, self.counts)
 
+    def sample_with_search(self, size: int = 1, seed: int = 42) -> np.ndarray:
+        """Sample from the distribution using a search algorithm.
+
+        Parameters
+        ----------
+        size : int, optional
+            _description_, by default 1
+        seed : int, optional
+            _description_, by default 42
+
+        Returns
+        -------
+        np.ndarray
+
+        """
+        rng = np.random.default_rng(seed=seed)
+        values = rng.random(size=size)
+        value_bins = np.searchsorted(self.cdf, values)
+        return self.centers[value_bins]
+
+    def sample(self, size: int = 1, seed: int = 42) -> np.ndarray:
+        """Sample using numpy choice function.
+
+        Parameters
+        ----------
+        size : int, optional
+            _description_, by default 1
+        seed : int, optional
+            _description_, by default 42
+
+        Returns
+        -------
+        np.ndarray
+            _description_
+
+        """
+        rng = np.random.default_rng(seed=seed)
+        return rng.choice(
+            self.centers,
+            size=size,
+            p=self.counts / np.sum(self.counts, dtype=float),
+        )
+
 
 def compute_histogram(
     data: np.ndarray,
