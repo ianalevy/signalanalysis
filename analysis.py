@@ -16,6 +16,8 @@ class HistogramResults:
     def __post_init__(self):
         if self.centers is None:
             self.centers = (self.bins[1:] + self.bins[:-1]) / 2
+        raw_cdf = np.cumsum(self.counts)
+        self.cdf = raw_cdf / raw_cdf[-1]
 
     def interp_distr(self) -> Callable:
         return np.interp(self.centers, self.counts)
