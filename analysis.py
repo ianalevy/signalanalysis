@@ -24,7 +24,11 @@ class HistogramResults:
     def interp_cdf(self, x) -> Callable:
         return np.interp(x, self.bins[1:], self.cdf)
 
-    def sample_with_search(self, size: int = 1, seed: int = 42) -> np.ndarray:
+    def sample_with_search(
+        self,
+        size: int = 1,
+        rng=np.random.default_rng(seed=42),
+    ) -> np.ndarray:
         """Sample from the distribution using a search algorithm.
 
         Parameters
@@ -39,12 +43,11 @@ class HistogramResults:
         np.ndarray
 
         """
-        rng = np.random.default_rng(seed=seed)
         values = rng.random(size=size)
         value_bins = np.searchsorted(self.cdf, values)
         return self.centers[value_bins]
 
-    def sample(self, size: int = 1, seed: int = 42) -> np.ndarray:
+    def sample(self, size: int = 1, rng=np.random.default_rng(seed=42)) -> np.ndarray:
         """Sample using numpy choice function.
 
         Parameters
@@ -60,7 +63,6 @@ class HistogramResults:
             _description_
 
         """
-        rng = np.random.default_rng(seed=seed)
         return rng.choice(
             self.centers,
             size=size,
