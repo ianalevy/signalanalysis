@@ -21,11 +21,10 @@ class KSTestResult:
 class HistogramResults:
     bins: np.ndarray
     counts: np.ndarray
-    centers: np.ndarray | None = None
 
-    def __post_init__(self):
-        if self.centers is None:
-            self.centers = (self.bins[1:] + self.bins[:-1]) / 2
+    @property
+    def centers(self) -> np.ndarray:
+        return (self.bins[1:] + self.bins[:-1]) / 2
 
     @property
     def cdf(self) -> np.ndarray:
