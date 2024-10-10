@@ -152,16 +152,16 @@ def plot_line(win, x, y):
 
 
 def do_ks_test(
-    new_data: np.ndarray,
     hist: HistogramResults,
+    new_data: np.ndarray,
 ) -> Any:
     """Do Kolmogorov Smirnov test.
 
     Parameters
     ----------
-    new_data : np.ndarray
-        _description_
     hist : HistogramResults
+        _description_
+    new_data : np.ndarray
         _description_
 
     Returns
