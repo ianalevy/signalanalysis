@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_equal
 
-from analysis import HistogramResults, compute_histogram
+from analysis import HistogramResults, compute_histogram, ks_test_data
 
 
 class TestAnalysis(unittest.TestCase):
@@ -38,19 +38,28 @@ class TestAnalysis(unittest.TestCase):
 
     def test_ks_test(self):
         rng = np.random.default_rng(seed=42)
-        data = rng.uniform(10, 20, size=1000)
+        data_len = 1000
+        data = rng.uniform(10, 20, size=data_len)
         hist = compute_histogram(data, 100)
 
-        res = hist.ks_test_new_data(rng.uniform(10, 40, size=10))
+        new_data = rng.uniform(10, 40, size=10)
+        res = hist.ks_test_new_data(new_data)
         assert res.pvalue < 0.01
         assert np.abs(res.statistic - 0.659) < 0.001
+        assert not (ks_test_data(data, new_data)[0])
+        assert np.sum(hist.counts) == data_len
 
-        old_counts = np.sum(hist.counts)
-        res = hist.ks_test_new_data(rng.uniform(10, 20, size=10), confidence=0.05)
+        new_data = rng.uniform(10, 20, size=10)
+        assert ks_test_data(data, new_data)[0]
+        res = hist.ks_test_new_data(
+            new_data,
+            confidence=0.05,
+            update_counts=True,
+        )
         # data is from same distribution so will have large p value
         assert res.pvalue > 0.05
         # all data should be added to histogram
-        assert np.sum(hist.counts) == old_counts + 10
+        assert np.sum(hist.counts) == data_len + 10
 
     def test_update_hist(self):
         rng = np.random.default_rng(seed=42)

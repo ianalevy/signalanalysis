@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
+from typing import Any, Callable
 
 import numpy as np
 import pyqtgraph as pg
@@ -134,6 +134,37 @@ def compute_histogram(
     return HistogramResults(edges, counts)
 
 
+def ks_test_data(
+    ref_data: np.ndarray,
+    new_data: np.ndarray,
+    bins: int = 100,
+    confidence: float = 0.05,
+) -> tuple[bool, KSTestResult]:
+    """Check if two data sets from same distribution.
+
+    Parameters
+    ----------
+    ref_data : np.ndarray
+        reference data set
+    new_data : np.ndarray
+        new data set
+    bins : int, optional
+        number of bins to use in histogram, by default 100
+    confidence : float, optional
+        confidence level, by default 0.05
+
+    Returns
+    -------
+    tuple[bool, KSTestResult]
+
+    """
+    hist = compute_histogram(ref_data, bins=bins)
+    ks_res = hist.ks_test_new_data(new_data, confidence=confidence)
+
+    data_match_q = ks_res.pvalue > confidence
+    return (data_match_q, ks_res)
+
+
 def plot_hist(win, hist: HistogramResults):
     """Histogram plot.
 
@@ -202,10 +233,39 @@ def do_ks_test(
 
 if __name__ == "__main__":
     rng = np.random.default_rng(seed=42)
-    data = rng.normal(loc=3, size=1000)
-    hist = compute_histogram(data, bins=50)
+    mean = 4
+    data = rng.normal(loc=mean, size=10000000)
+    # data = rng.exponential(scale=1, size=10000)
+    hist = compute_histogram(data, bins=1000)
 
-    win = pg.GraphicsLayoutWidget(show=True)
-    plot_hist(win, hist)
+    # win = pg.GraphicsLayoutWidget(show=True)
+    # plot_hist(win, hist)
+    # plot_line(win, hist.centers, hist.interp_cdf(hist.centers))
+    # win.nextRow()
 
-    pg.exec()
+    stat1s = []
+    stat2s = []
+    for _ in list(range(1000)):
+        new_data = hist.sample(100, rng=rng)
+        res = stats.ks_1samp(new_data, lambda x: stats.norm.cdf(x, loc=mean))
+        res2 = do_ks_test(hist, new_data)
+        stat1s.append(res.statistic)
+        stat2s.append(res2.statistic)
+
+    print(np.mean(stat1s))
+    print(np.mean(stat2s))
+
+    exit()
+    new_data = hist.sample(100)
+
+    res = stats.ks_1samp(new_data, lambda x: stats.norm.cdf(x, loc=mean))
+    print(res)
+
+    res = do_ks_test(hist, new_data)
+    print(res)
+
+    # new_hist = compute_histogram(new_data, bins=50)
+    # plot_hist(win, new_hist)
+    # plot_line(win, new_hist.centers, new_hist.cdf)
+
+    # pg.exec()
