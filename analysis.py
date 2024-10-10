@@ -22,7 +22,7 @@ class HistogramResults:
         self.cdf = raw_cdf / raw_cdf[-1]
 
     def interp_cdf(self, x) -> Callable:
-        return np.interp(x, self.centers, self.cdf)
+        return np.interp(x, self.bins[1:], self.cdf)
 
     def sample_with_search(self, size: int = 1, seed: int = 42) -> np.ndarray:
         """Sample from the distribution using a search algorithm.
