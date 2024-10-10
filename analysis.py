@@ -86,16 +86,12 @@ class HistogramResults:
 
         Returns
         -------
-        _type_
-            _description_
+        KSTestResult
 
         """
-        scipy_res = ks_1samp(new_data, self.interp_cdf)
+        scipy_res = ks_1samp(new_data, self.interp_cdf)._asdict()
         return KSTestResult(
-            scipy_res.statistic,
-            scipy_res.pvalue,
-            scipy_res.statistic_location,
-            scipy_res.statistic_sign,
+            **scipy_res,
         )
 
 
