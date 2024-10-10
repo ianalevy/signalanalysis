@@ -95,6 +95,18 @@ class HistogramResults:
         return KSTestResult(
             **scipy_res,
         )
+    def update(self, new_data: np.ndarray):
+        """Update bin counts with additional data.
+
+        TODO: update edges as well.
+
+        Parameters
+        ----------
+        new_data : np.ndarray
+
+        """
+        new_counts, _ = np.histogram(new_data, bins=self.bins)
+        self.counts += new_counts
 
 
 def compute_histogram(

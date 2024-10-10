@@ -45,6 +45,16 @@ class TestAnalysis(unittest.TestCase):
         assert res.pvalue < 0.01
         assert np.abs(res.statistic - 0.659) < 0.001
 
+    def test_update_hist(self):
+        rng = np.random.default_rng(seed=42)
+        data = rng.uniform(10, 20, size=20)
+        hist = compute_histogram(data, 10)
+        assert_array_equal(hist.counts, np.array([3, 1, 0, 1, 3, 1, 3, 3, 3, 2]))
+
+        new_data = rng.uniform(15, 20, size=5)
+        hist.update(new_data)
+        assert_array_equal(hist.counts, np.array([3, 1, 0, 1, 3, 1, 4, 3, 4, 4]))
+
 
 if __name__ == "__main__":
     unittest.main()
