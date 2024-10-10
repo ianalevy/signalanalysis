@@ -33,6 +33,9 @@ class TestAnalysis(unittest.TestCase):
         assert len(my_sample) == 100
         assert np.abs(np.mean(my_sample) - mean) < 0.1
 
+        assert hist.interp_cdf(mean + 3) > 0.99
+        assert hist.interp_cdf(mean - 3) < 0.01
+
 
 if __name__ == "__main__":
     unittest.main()
