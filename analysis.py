@@ -82,16 +82,19 @@ class HistogramResults:
     def ks_test_new_data(
         self,
         new_data: np.ndarray,
-        confidence: float | None = None,
+        confidence: float = 0.05,
+        update_counts: bool | None = None,
     ) -> KSTestResult:
         """Kolmogorov-Smirnov test for similarity.
 
         Parameters
         ----------
         new_data : np.ndarray
-        confidence : float | None, optional
-            if provided will update counts in histogram if pvalue
-            greater than confidence level, by default None
+            _description_
+        confidence : float, optional
+            _description_, by default 0.05
+        update_counts : bool | None, optional
+            If True will update counts in histogram, by default None
 
         Returns
         -------
@@ -103,7 +106,7 @@ class HistogramResults:
         test_result = KSTestResult(
             **scipy_res,
         )
-        if (confidence is not None) and (test_result.pvalue > confidence):
+        if update_counts and (test_result.pvalue > confidence):
             self.update(new_data)
 
         return test_result
