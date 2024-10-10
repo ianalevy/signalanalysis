@@ -5,6 +5,8 @@ from typing import Callable
 
 import numpy as np
 import pyqtgraph as pg
+from scipy import stats
+from scipy.stats import ks_1samp
 
 
 @dataclass
@@ -19,8 +21,8 @@ class HistogramResults:
         raw_cdf = np.cumsum(self.counts)
         self.cdf = raw_cdf / raw_cdf[-1]
 
-    def interp_distr(self) -> Callable:
-        return np.interp(self.centers, self.counts)
+    def interp_cdf(self, x) -> Callable:
+        return np.interp(x, self.centers, self.cdf)
 
     def sample_with_search(self, size: int = 1, seed: int = 42) -> np.ndarray:
         """Sample from the distribution using a search algorithm.
