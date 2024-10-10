@@ -23,6 +23,16 @@ class TestAnalysis(unittest.TestCase):
         assert len(res.counts) == data_len
         assert len(res.centers) == data_len
 
+    def test_histogram_results(self):
+        rng = np.random.default_rng(seed=42)
+        mean = 4
+        data = rng.normal(loc=mean, size=1000)
+        hist = compute_histogram(data, 100)
+
+        my_sample = hist.sample(100)
+        assert len(my_sample) == 100
+        assert np.abs(np.mean(my_sample) - mean) < 0.1
+
 
 if __name__ == "__main__":
     unittest.main()
