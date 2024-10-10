@@ -10,6 +10,14 @@ from scipy.stats import ks_1samp
 
 
 @dataclass
+class KSTestResult:
+    statistic: float
+    pvalue: float
+    statistic_location: float
+    statistic_sign: int
+
+
+@dataclass
 class HistogramResults:
     bins: np.ndarray
     counts: np.ndarray
@@ -67,6 +75,27 @@ class HistogramResults:
             self.centers,
             size=size,
             p=self.counts / np.sum(self.counts, dtype=float),
+        )
+
+    def ks_test_new_data(self, new_data: np.ndarray) -> KSTestResult:
+        """Kolmogorov-Smirnov test for similarity.
+
+        Parameters
+        ----------
+        new_data : np.ndarray
+
+        Returns
+        -------
+        _type_
+            _description_
+
+        """
+        scipy_res = ks_1samp(new_data, self.interp_cdf)
+        return KSTestResult(
+            scipy_res.statistic,
+            scipy_res.pvalue,
+            scipy_res.statistic_location,
+            scipy_res.statistic_sign,
         )
 
 

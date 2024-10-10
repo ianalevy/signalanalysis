@@ -36,6 +36,15 @@ class TestAnalysis(unittest.TestCase):
         assert hist.interp_cdf(mean + 3) > 0.99
         assert hist.interp_cdf(mean - 3) < 0.01
 
+    def test_ks_test(self):
+        rng = np.random.default_rng(seed=42)
+        data = rng.uniform(10, 20, size=1000)
+        hist = compute_histogram(data, 100)
+
+        res = hist.ks_test_new_data(rng.uniform(10, 40, size=10))
+        assert res.pvalue < 0.01
+        assert np.abs(res.statistic - 0.659) < 0.001
+
 
 if __name__ == "__main__":
     unittest.main()
