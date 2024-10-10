@@ -123,6 +123,28 @@ def plot_line(win, x, y):
     plt.plot(x, y)
 
 
+def do_ks_test(
+    new_data: np.ndarray,
+    hist: HistogramResults,
+) -> Any:
+    """Do Kolmogorov Smirnov test.
+
+    Parameters
+    ----------
+    new_data : np.ndarray
+        _description_
+    hist : HistogramResults
+        _description_
+
+    Returns
+    -------
+    Any
+        _description_
+
+    """
+    return ks_1samp(new_data, hist.interp_cdf)
+
+
 if __name__ == "__main__":
     rng = np.random.default_rng(seed=42)
     data = rng.normal(loc=3, size=1000)
