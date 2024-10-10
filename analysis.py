@@ -78,6 +78,16 @@ def compute_histogram(
 
 
 def plot_hist(win, hist: HistogramResults):
+    """Histogram plot.
+
+    Parameters
+    ----------
+    win : _type_
+        _description_
+    hist : HistogramResults
+        _description_
+
+    """
     win.resize(800, 480)
     win.setWindowTitle("Histogram")
     plt = win.addPlot()
@@ -90,6 +100,25 @@ def plot_hist(win, hist: HistogramResults):
         brush=(0, 0, 255, 150),
     )
     plt.addItem(bgi)
+
+
+def plot_line(win, x, y):
+    """Line plot.
+
+    Parameters
+    ----------
+    win : _type_
+        _description_
+    x : _type_
+        _description_
+    y : _type_
+        _description_
+
+    """
+    win.resize(800, 480)
+    win.setWindowTitle("Histogram")
+    plt = win.addPlot()
+    plt.plot(x, y)
 
 
 if __name__ == "__main__":
