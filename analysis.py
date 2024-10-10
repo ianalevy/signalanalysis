@@ -79,12 +79,19 @@ class HistogramResults:
             p=self.counts / np.sum(self.counts, dtype=float),
         )
 
-    def ks_test_new_data(self, new_data: np.ndarray) -> KSTestResult:
+    def ks_test_new_data(
+        self,
+        new_data: np.ndarray,
+        confidence: float | None = None,
+    ) -> KSTestResult:
         """Kolmogorov-Smirnov test for similarity.
 
         Parameters
         ----------
         new_data : np.ndarray
+        confidence : float | None, optional
+            if provided will update counts in histogram if pvalue
+            greater than confidence level, by default None
 
         Returns
         -------
@@ -92,9 +99,15 @@ class HistogramResults:
 
         """
         scipy_res = ks_1samp(new_data, self.interp_cdf)._asdict()
-        return KSTestResult(
+
+        test_result = KSTestResult(
             **scipy_res,
         )
+        if (confidence is not None) and (test_result.pvalue > confidence):
+            self.update(new_data)
+
+        return test_result
+
     def update(self, new_data: np.ndarray):
         """Update bin counts with additional data.
 

@@ -45,6 +45,13 @@ class TestAnalysis(unittest.TestCase):
         assert res.pvalue < 0.01
         assert np.abs(res.statistic - 0.659) < 0.001
 
+        old_counts = np.sum(hist.counts)
+        res = hist.ks_test_new_data(rng.uniform(10, 20, size=10), confidence=0.05)
+        # data is from same distribution so will have large p value
+        assert res.pvalue > 0.05
+        # all data should be added to histogram
+        assert np.sum(hist.counts) == old_counts + 10
+
     def test_update_hist(self):
         rng = np.random.default_rng(seed=42)
         data = rng.uniform(10, 20, size=20)
