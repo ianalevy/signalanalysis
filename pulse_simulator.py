@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import numpy as np
+import pyqtgraph as pg
 
 
 def frame_array(data: np.ndarray, frame_length: int):
@@ -55,6 +58,38 @@ def generate_noise(
 
     """
     return rng.normal(mean, var, size=num_samples)
+
+
+def plotter(
+    y: np.ndarray,
+    x: np.ndarray | None = None,
+    win: pg.GraphicsLayout | None = None,
+):
+    """Plot data using pyqtplot.
+
+    Parameters
+    ----------
+    y : np.ndarray
+        _description_
+    x : np.ndarray | None, optional
+        _description_, by default None
+    win : pg.GraphicsLayout | None, optional
+        _description_, by default None
+
+    """
+    app = pg.mkQApp("Plotting Example")
+
+    if win is None:
+        win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
+    win.resize(1000, 600)
+    win.setWindowTitle("pyqtgraph example: Plotting")
+
+    pg.setConfigOptions(antialias=True)
+    if x is None:
+        p1 = win.addPlot(title="Basic array plotting", y=y)
+    else:
+        p1 = win.addPlot(title="Basic array plotting", y=y, x=x)
+    p1.setMouseEnabled(x=True, y=False)
 
 
 if __name__ == "__main__":
