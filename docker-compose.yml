@@ -1,0 +1,13 @@
+services:
+  imadev:
+    image: analysis:dev-$USER
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - ~/code/signalanalysis:/code
+      - ~/data:/data
+    environment:
+      - DISPLAY=${DISPLAY}
+    command: bash -c "sleep infinity"
+    #network_mode: host
