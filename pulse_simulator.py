@@ -60,11 +60,7 @@ def generate_noise(
     return rng.normal(mean, var, size=num_samples)
 
 
-def plotter(
-    y: np.ndarray,
-    x: np.ndarray | None = None,
-    win: pg.GraphicsLayout | None = None,
-):
+def plotter(win: pg.GraphicsLayout, y: np.ndarray, x: np.ndarray | None = None) -> None:
     """Plot data using pyqtplot.
 
     Parameters
@@ -79,8 +75,6 @@ def plotter(
     """
     app = pg.mkQApp("Plotting Example")
 
-    if win is None:
-        win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
     win.resize(1000, 600)
     win.setWindowTitle("pyqtgraph example: Plotting")
 
@@ -93,4 +87,8 @@ def plotter(
 
 
 if __name__ == "__main__":
-    print("hi")
+    data = generate_noise(1000)
+    win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
+    plotter(win, data)
+
+    pg.exec()
