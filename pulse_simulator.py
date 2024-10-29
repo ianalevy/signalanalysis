@@ -145,6 +145,22 @@ def make_signal(
     return (data_times, signal)
 
 
+def calc_norm(data: np.ndarray) -> float:
+    """Norm of data.
+
+    Sum column vectors.
+
+    Parameters
+    ----------
+    data : np.ndarray
+
+    Returns
+    -------
+    float
+
+    """
+    return np.sum(data, axis=0)
+
 if __name__ == "__main__":
     win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
     plotter(win, data)

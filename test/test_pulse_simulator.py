@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
-from pulse_simulator import Pulse, frame_array, make_signal
+from pulse_simulator import Pulse, calc_norm, frame_array, make_signal
 
 
 class TestAnalysis(unittest.TestCase):
@@ -37,6 +37,12 @@ class TestAnalysis(unittest.TestCase):
             times,
             np.arange(0, stop, step=0.01),
         )
+
+    def test_calc_norm(self):
+        data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        res = calc_norm(data)
+
+        assert_array_equal(res, np.array([12, 15, 18]))
 
 
 if __name__ == "__main__":
