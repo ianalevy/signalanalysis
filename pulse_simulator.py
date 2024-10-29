@@ -6,7 +6,21 @@ import numpy as np
 import pyqtgraph as pg
 
 
-def frame_array(data: np.ndarray, frame_length: int) -> list[np.ndarray]:
+def frame_array(data: np.ndarray, frame_length: int) -> np.ndarray:
+    """Frame data as a matrix.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        _description_
+    frame_length : int
+        _description_
+
+    Returns
+    -------
+    np.ndarray
+
+    """
     _, remainder = (int(_) for _ in divmod(len(data), frame_length))
     if remainder != 0:
         missing_data = np.zeros(frame_length - remainder, dtype=data.dtype)
@@ -14,7 +28,7 @@ def frame_array(data: np.ndarray, frame_length: int) -> list[np.ndarray]:
 
     num_frames = len(data) / frame_length
 
-    return np.array_split(data, num_frames)
+    return np.stack(np.array_split(data, num_frames))
 
 
 def save_as_1000(data, fp, inputs):
