@@ -161,7 +161,7 @@ def calc_norm(data: np.ndarray) -> float:
     """
     frame_length = data.shape[1]
     sums = np.sum(data, axis=0)
-    return np.max(np.abs(sums)) / frame_length
+    return np.max(np.abs(sums)) / data.shape[1]
 
 
 def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
