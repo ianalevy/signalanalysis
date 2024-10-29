@@ -42,7 +42,8 @@ class TestAnalysis(unittest.TestCase):
         data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         res = calc_norm(data)
 
-        assert_array_equal(res, np.array([12, 15, 18]))
+        assert_array_equal(res, 18)
+
 
 
 if __name__ == "__main__":

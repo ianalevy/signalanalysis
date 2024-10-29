@@ -159,10 +159,49 @@ def calc_norm(data: np.ndarray) -> float:
     float
 
     """
-    return np.sum(data, axis=0)
+    sums = np.sum(data, axis=0)
+
+    return np.max(np.abs(sums))
+
 
 if __name__ == "__main__":
-    win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
-    plotter(win, data)
+    # data = generate_noise(1000)
+    sample_rate_s = 0.01
+    (times, signal) = make_signal(
+        pri_s=0.45,
+        sample_rate_s=sample_rate_s,
+        num_pulses=30,
+        pw_s=0.002,
+    )
+    print(times)
+    # print(signal)
+    # plotter(win, signal)
+
+    (pris, norms) = try_pris(signal, sample_rate_s)
+    print(pris)
+    print(norms)
+    # print(signal)
+
+    # (times, signal) = make_signal(
+    #     pri_s=0.1,
+    #     sample_rate_s=0.0001,
+    #     num_pulses=12,
+    #     pw_s=0.001,
+    # )
+
+    # noise = generate_noise(len(signal))
+    # signal = signal + noise
+
+    win = pg.GraphicsLayoutWidget(show=True, title="Maximum Likelihood")
+    win.resize(2000, 2000)
+    win.setWindowTitle("PRI estimator")
+
+    p1 = win.addPlot(title="data", y=signal, x=times)
+    p1.setMouseEnabled(x=True, y=False)
+    win.nextRow()
+    p2 = win.addPlot(title="PRI vs nom", y=norms, x=pris)
+    p2.setMouseEnabled(x=True, y=False)
+
+    pg.setConfigOptions(antialias=True)
 
     pg.exec()
