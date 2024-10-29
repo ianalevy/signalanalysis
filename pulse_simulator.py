@@ -116,9 +116,18 @@ class Pulse:
         return self.analog_shape(x_pts)
 
 
-def make_signal(pri_s, sample_rate_s, num_pulses, pw_s) -> np.ndarray:
+def make_signal(
+    pri_s: float,
+    sample_rate_s: float,
+    num_pulses: float,
+    pw_s: float | None,
+    duty_cycle: float = 0.001,
+    snr: float = 100,
+) -> np.ndarray:
     start = 0
     stop = pri_s * num_pulses + pw_s
+    if pw_s is None:
+        pw_s = pri_s * duty_cycle
 
     data_times = np.arange(start=start, stop=stop, step=sample_rate_s)
     signal = np.zeros_like(data_times)
@@ -131,7 +140,7 @@ def make_signal(pri_s, sample_rate_s, num_pulses, pw_s) -> np.ndarray:
         new_indices = list(range(start_index, stop_index))
         pulse_indices.append(new_indices)
 
-        signal[new_indices] = 1
+        signal[new_indices] = snr
 
     return (data_times, signal)
 
