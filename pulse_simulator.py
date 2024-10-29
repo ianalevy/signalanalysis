@@ -164,6 +164,18 @@ def calc_norm(data: np.ndarray) -> float:
     return np.max(np.abs(sums))
 
 
+def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
+    min_pri = 2 * sample_rate_s
+    max_pri = 1
+
+    pris_to_test = list(np.arange(min_pri, max_pri, 0.05))
+    frame_lengths = (np.array(pris_to_test) / sample_rate_s).astype(int)
+
+    results = [calc_norm(frame_array(data, _)) for _ in frame_lengths]
+
+    return (pris_to_test, results)
+
+
 if __name__ == "__main__":
     # data = generate_noise(1000)
     sample_rate_s = 0.01
