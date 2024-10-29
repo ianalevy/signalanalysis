@@ -31,11 +31,11 @@ class TestAnalysis(unittest.TestCase):
 
     def test_make_signal(self):
         (times, signal) = make_signal(0.1, 0.01, 3, 0.02)
-        assert len(times) == 32
+        assert len(times) == 33
         stop = 3 * 0.1 + 0.02
         assert_array_almost_equal(
             times,
-            np.linspace(0, stop, num=int(stop / 0.01)),
+            np.arange(0, stop, step=0.01),
         )
 
 
