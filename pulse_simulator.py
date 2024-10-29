@@ -101,6 +101,21 @@ def plotter(win: pg.GraphicsLayout, y: np.ndarray, x: np.ndarray | None = None) 
     p1.setMouseEnabled(x=True, y=False)
 
 
+@dataclass
+class Pulse:
+    analog_shape: callable = np.sinc
+    min: float = -10
+    max: float = 10
+
+    def __post_init__(self):
+        self.hi = 5
+
+    def sample_pulse(self, sample_rate: float):
+        num_samples = int((self.max - self.min) / sample_rate)
+        x_pts = np.linspace(self.min, self.max, num_samples)
+        return self.analog_shape(x_pts)
+
+
 if __name__ == "__main__":
     data = generate_noise(1000)
     win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")

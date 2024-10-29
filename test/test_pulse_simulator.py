@@ -23,6 +23,12 @@ class TestAnalysis(unittest.TestCase):
             np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 0]]),
         )
 
+    def test_pulse(self):
+        pulse = Pulse()
+        res = pulse.sample_pulse(1e-2)
+
+        assert len(res) == 20 / (1.0e-2)
+
 
 if __name__ == "__main__":
     unittest.main()
