@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 import pyqtgraph as pg
 
 
-def frame_array(data: np.ndarray, frame_length: int):
-    quotient, remainder = (int(_) for _ in divmod(len(data), frame_length))
-
+def frame_array(data: np.ndarray, frame_length: int) -> list[np.ndarray]:
+    _, remainder = (int(_) for _ in divmod(len(data), frame_length))
     if remainder != 0:
-        missing_data = np.zeros(quotient, dtype=data.dtype)
+        missing_data = np.zeros(frame_length - remainder, dtype=data.dtype)
         data = np.append(data, missing_data)
 
     num_frames = len(data) / frame_length
