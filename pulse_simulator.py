@@ -119,17 +119,24 @@ class Pulse:
 def make_signal(pri_s, sample_rate_s, num_pulses, pw_s) -> np.ndarray:
     start = 0
     stop = pri_s * num_pulses + pw_s
-    num_samples = int(stop / sample_rate_s)
-
-    pulse_starts = pri_s * np.array(list(range(num_pulses)))
-    pulse_ends = pri_s * np.array(list(range(num_pulses))) + pw_s
-    pulse_times = list(zip(pulse_starts, pulse_ends))
 
     data_times = np.arange(start=start, stop=stop, step=sample_rate_s)
     signal = np.zeros_like(data_times)
 
+    pulse_indices = []
+    pulse_starts = pri_s * np.array(list(range(num_pulses)))
+    for p_start in pulse_starts:
+        start_index = int(p_start / sample_rate_s)
+        stop_index = start_index + int(pw_s / sample_rate_s) + 1
+        new_indices = list(range(start_index, stop_index))
+        pulse_indices.append(new_indices)
+
+        signal[new_indices] = 1
+
+    return (data_times, signal)
+
+
 if __name__ == "__main__":
-    data = generate_noise(1000)
     win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
     plotter(win, data)
 
