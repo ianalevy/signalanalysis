@@ -116,6 +116,18 @@ class Pulse:
         return self.analog_shape(x_pts)
 
 
+def make_signal(pri_s, sample_rate_s, num_pulses, pw_s) -> np.ndarray:
+    start = 0
+    stop = pri_s * num_pulses + pw_s
+    num_samples = int(stop / sample_rate_s)
+
+    pulse_starts = pri_s * np.array(list(range(num_pulses)))
+    pulse_ends = pri_s * np.array(list(range(num_pulses))) + pw_s
+    pulse_times = list(zip(pulse_starts, pulse_ends))
+
+    data_times = np.arange(start=start, stop=stop, step=sample_rate_s)
+    signal = np.zeros_like(data_times)
+
 if __name__ == "__main__":
     data = generate_noise(1000)
     win = pg.GraphicsLayoutWidget(show=True, title="Basic plotting examples")
