@@ -120,15 +120,15 @@ def make_signal(
     pri_s: float,
     sample_rate_s: float,
     num_pulses: float,
-    pw_s: float | None,
+    pw_s: float | None = None,
     duty_cycle: float = 0.001,
     snr: float = 100,
 ) -> np.ndarray:
-    start = 0
-    stop = pri_s * num_pulses + pw_s
     if pw_s is None:
         pw_s = pri_s * duty_cycle
 
+    start = 0
+    stop = pri_s * num_pulses + pw_s
     data_times = np.arange(start=start, stop=stop, step=sample_rate_s)
     signal = np.zeros_like(data_times)
 
