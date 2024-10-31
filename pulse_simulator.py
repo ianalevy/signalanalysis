@@ -210,21 +210,22 @@ def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
 
 if __name__ == "__main__":
     # data = generate_noise(1000)
-    sample_rate_s = 0.01
-    (times, signal) = make_signal(
+    sample_rate_s = 0.0001
+    pw_s = 0.002
+
+    (times, data) = make_signal(
         pri_s=0.45,
         sample_rate_s=sample_rate_s,
-        num_pulses=30,
-        pw_s=0.002,
+        num_pulses=8,
+        pw_s=pw_s,
     )
-    print(times)
-    # print(signal)
-    # plotter(win, signal)
 
-    (pris, norms) = try_pris(signal, sample_rate_s)
-    print(pris)
-    print(norms)
-    # print(signal)
+    noise = generate_noise(len(data))
+    data = data + noise
+
+    detects = detector(data, sample_rate_s, pw_s)
+
+    (pris, norms) = try_pris(detects, sample_rate_s)
 
     # (times, signal) = make_signal(
     #     pri_s=0.1,
@@ -233,15 +234,15 @@ if __name__ == "__main__":
     #     pw_s=0.001,
     # )
 
-    # noise = generate_noise(len(signal))
-    # signal = signal + noise
-
     win = pg.GraphicsLayoutWidget(show=True, title="Maximum Likelihood")
     win.resize(2000, 2000)
     win.setWindowTitle("PRI estimator")
 
-    p1 = win.addPlot(title="data", y=signal, x=times)
+    p1 = win.addPlot(title="data", y=data, x=times)
     p1.setMouseEnabled(x=True, y=False)
+    win.nextRow()
+    p2 = win.addPlot(title="detector", y=detects, x=times)
+    p2.setMouseEnabled(x=True, y=False)
     win.nextRow()
     p2 = win.addPlot(title="PRI vs nom", y=norms, x=pris)
     p2.setMouseEnabled(x=True, y=False)
