@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import pyqtgraph as pg
+from scipy import signal
 
 
 def frame_array(data: np.ndarray, frame_length: int) -> np.ndarray:
@@ -159,9 +160,40 @@ def calc_norm(data: np.ndarray) -> float:
     float
 
     """
-    frame_length = data.shape[1]
     sums = np.sum(data, axis=0)
     return np.max(np.abs(sums)) / data.shape[1]
+
+
+def detector(
+    data: np.ndarray,
+    sample_rate_s: float,
+    pw_s: float,
+    threshold: float = 10,
+) -> np.array:
+    """Detect signal.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        _description_
+    sample_rate_s : float
+        _description_
+    pw_s : float
+        _description_
+    threshold : float, optional
+        _description_, by default 10
+
+    Returns
+    -------
+    np.array
+        _description_
+
+    """
+    width = int(pw_s / sample_rate_s) + 1
+    b_filter = [1 for _ in range(width)]
+    detects = signal.lfilter(b=b_filter, a=[1], x=data)
+
+    return np.where(detects >= 400, 1, 0)
 
 
 def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
