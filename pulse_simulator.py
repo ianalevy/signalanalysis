@@ -213,10 +213,15 @@ class Pdw:
     toa_s: np.array = field(default_factory=lambda: np.array([]))
     pw_s: np.array = field(default_factory=lambda: np.array([]))
     rf_s: np.array = field(default_factory=lambda: np.array([]))
+    pa: np.array = field(default_factory=lambda: np.array([]))
 
 
-def sampled_dw(pdw: Pdw, sample_rate_Hz) -> Pdw:
-    return Pdw()
+def sampled_dw(pdw: Pdw, sample_rate_Hz: float) -> Pdw:
+    start = np.min(pdw.toa_s)
+    end = np.max(pdw.toa_s)
+    num_sample_points = int(np.ceil((end - start) * sample_rate_Hz))
+    toa_s = np.linspace(start, end, num_sample_points)
+    return Pdw(toa_s)
 
 
 if __name__ == "__main__":

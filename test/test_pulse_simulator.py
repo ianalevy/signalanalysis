@@ -16,13 +16,33 @@ from pulse_simulator import (
 class TestPdw(unittest.TestCase):
     def test_sample(self):
         pdw = Pdw(
-            np.array([5, 10, 15, 20]),
+            np.array([0.05, 0.10, 0.15, 0.20]),
             np.array([1, 2, 3, 1]),
             np.array([2, 2, 2, 2]),
+            np.array([2, 2, 2, 2]),
         )
-        res = sampled_dw(pdw, 5)
+        res = sampled_dw(pdw, 80)
         print(res)
-        assert len(res.toa_s) == 10
+        assert_array_almost_equal(
+            res.toa_s,
+            np.array(
+                [
+                    0.05,
+                    0.0625,
+                    0.075,
+                    0.0875,
+                    0.1,
+                    0.1125,
+                    0.125,
+                    0.1375,
+                    0.15,
+                    0.1625,
+                    0.175,
+                    0.1875,
+                    0.2,
+                ],
+            ),
+        )
 
 
 class TestAnalysis(unittest.TestCase):
