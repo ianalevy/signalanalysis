@@ -4,13 +4,25 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 from pulse_simulator import (
+    Pdw,
     Pulse,
-    calc_norm,
-    detector,
     frame_array,
     make_signal,
+    sampled_dw,
     try_pris,
 )
+
+
+class TestPdw(unittest.TestCase):
+    def test_sample(self):
+        pdw = Pdw(
+            np.array([5, 10, 15, 20]),
+            np.array([1, 2, 3, 1]),
+            np.array([2, 2, 2, 2]),
+        )
+        res = sampled_dw(pdw, 5)
+        print(res)
+        assert len(res.toa_s) == 10
 
 
 class TestAnalysis(unittest.TestCase):
