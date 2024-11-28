@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 
 import numpy as np
 import pyqtgraph as pg
@@ -206,6 +206,14 @@ def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
     results = [calc_norm(frame_array(data, _)) for _ in frame_lengths]
 
     return (pris_to_test, results)
+
+
+
+@dataclass
+class Pdw:
+    toa: np.array = fields(default_factory=lambda: np.array([]))
+    pw: np.array = fields(default_factory=lambda: np.array([]))
+    rf: np.array = fields(default_factory=lambda: np.array([]))
 
 
 if __name__ == "__main__":
