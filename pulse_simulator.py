@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 import pyqtgraph as pg
-from scipy import signal
+from scipy import ndimage, signal
 
 
 def frame_array(data: np.ndarray, frame_length: int) -> np.ndarray:
@@ -223,6 +223,7 @@ def moving_average(ar: np.ndarray, order: int = 3) -> np.ndarray:
     """Compute moving average.
 
     Input array is padded with zeros.
+    implementation with ndimage is probably faster than with convolve.
 
 
     Parameters
@@ -236,7 +237,8 @@ def moving_average(ar: np.ndarray, order: int = 3) -> np.ndarray:
     np.ndarray
 
     """
-    return signal.convolve(ar, np.ones(order) / order, "same")
+    # return signal.convolve(ar, np.ones(order) / order, "same")
+    return ndimage.uniform_filter1d(ar, order, mode="constant", cval=0.0)
 
 
 
