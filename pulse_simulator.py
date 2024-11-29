@@ -241,6 +241,22 @@ def moving_average(ar: np.ndarray, order: int = 3) -> np.ndarray:
     return ndimage.uniform_filter1d(ar, order, mode="constant", cval=0.0)
 
 
+def noise_filter(ar: np.ndarray, order: int = 3) -> np.ndarray:
+    """Subtract off moving average.
+
+    Parameters
+    ----------
+    ar : np.ndarray
+    order : int, optional
+        window length, by default 3
+
+    Returns
+    -------
+    np.ndarray
+
+    """
+    return ar - moving_average(ar, order)
+
 
 if __name__ == "__main__":
     # data = generate_noise(1000)

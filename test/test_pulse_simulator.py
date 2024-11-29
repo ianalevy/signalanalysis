@@ -83,6 +83,12 @@ class TestPdw(unittest.TestCase):
         truth = np.array([2.0 / 3.0, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
 
+    def test_noise_filter(self):
+        data = np.array([1.0, 1, 1, 5, 1, 1, 1, 1])
+        res = noise_filter(data, 3)
+        truth = np.array([1.0 / 3.0, 0.0, -4 / 3, 8 / 3, -4 / 3, 0, 0, 1.0 / 3])
+        assert_array_almost_equal(res, truth)
+
 
 class TestAnalysis(unittest.TestCase):
     def test_frame_array(self):
