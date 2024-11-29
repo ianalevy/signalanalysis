@@ -42,6 +42,11 @@ class TestPdw(unittest.TestCase):
                 ],
             ),
         )
+    def test_moving_average(self):
+        data = np.array([1, 1, 1, 5, 1, 1, 1, 1])
+        res = moving_average(data, 3)
+        truth = np.array([2 / 3, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
+        assert_array_almost_equal(res, truth)
 
 
 class TestAnalysis(unittest.TestCase):

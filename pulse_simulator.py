@@ -219,9 +219,25 @@ class Pdw:
 def sampled_dw(pdw: Pdw, sample_rate_Hz: float) -> Pdw:
     start = np.min(pdw.toa_s)
     end = np.max(pdw.toa_s)
-    num_sample_points = int(np.ceil((end - start) * sample_rate_Hz))
-    toa_s = np.linspace(start, end, num_sample_points)
-    return Pdw(toa_s)
+def moving_average(ar: np.ndarray, order: int = 3) -> np.ndarray:
+    """Compute moving average.
+
+    Input array is padded with zeros.
+
+
+    Parameters
+    ----------
+    ar : np.ndarray
+    order : int, optional
+        window length, by default 3
+
+    Returns
+    -------
+    np.ndarray
+
+    """
+    return signal.convolve(ar, np.ones(order) / order, "same")
+
 
 
 if __name__ == "__main__":
