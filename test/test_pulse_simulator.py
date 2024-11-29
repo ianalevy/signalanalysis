@@ -45,30 +45,38 @@ class TestPdw(unittest.TestCase):
             ),
         )
     def test_moving_average(self):
-        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         # order 1 does nothing
         res = moving_average(data, 1)
         truth = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         assert_array_almost_equal(res, truth)
 
-        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         res = moving_average(data, 2)
         truth = np.array([1 / 2, 1, 1, 3.2 / 2, 7.7 / 2, 6.5 / 2, 1, 1, 1])
         assert_array_almost_equal(res, truth)
 
-        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         res = moving_average(data, 3)
         truth = np.array([2 / 3, 1, 4.2 / 3, 8.7 / 3, 8.7 / 3, 7.5 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
 
         # window of size 8
-        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1])
+        data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1])
         # order 1 does nothing
         res = moving_average(data, 1)
         truth = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1])
         assert_array_almost_equal(res, truth)
 
-        data = np.array([1, 1, 1, 5, 1, 1, 1, 1])
+        data = np.array([1.0, 1.0])
+        res = moving_average(data, 3)
+        truth = np.array([2.0 / 3.0, 2.0 / 3.0])
+        assert_array_almost_equal(res, truth)
+
+        data = np.array([1.0, 1, 1, 5])
+        res = moving_average(data, 3)
+        truth = np.array([2.0 / 3.0, 1.0, 7.0 / 3, 6.0 / 3.0])
+        assert_array_almost_equal(res, truth)
         res = moving_average(data, 3)
         truth = np.array([0, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
