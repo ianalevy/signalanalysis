@@ -50,11 +50,20 @@ class TestPdw(unittest.TestCase):
         truth = np.array([2 / 3, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
 
-    def test_remove_noise(self):
         data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         # order 1 does nothing
-        res = noise_filter(data, 1)
+        res = moving_average(data, 1)
         truth = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        assert_array_almost_equal(res, truth)
+
+        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        res = moving_average(data, 2)
+        truth = np.array([1 / 2, 1, 1, 3.2 / 2, 7.7 / 2, 6.5 / 2, 1, 1, 1])
+        assert_array_almost_equal(res, truth)
+
+        data = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
+        res = moving_average(data, 3)
+        truth = np.array([2 / 3, 1, 4.2 / 3, 8.7 / 3, 8.7 / 3, 7.5 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
 
 
