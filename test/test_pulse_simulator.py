@@ -17,12 +17,11 @@ class TestPdw(unittest.TestCase):
     def test_sample(self):
         pdw = Pdw(
             np.array([0.05, 0.10, 0.15, 0.20]),
-            np.array([1, 2, 3, 1]),
+            np.array([0.01, 0.02, 0.03, 0.001]),
             np.array([2, 2, 2, 2]),
-            np.array([2, 2, 2, 2]),
+            np.array([2.1, 4.2, 6.5, 1.3]),
         )
         res = sampled_dw(pdw, 80)
-        print(res)
         assert_array_almost_equal(
             res.toa_s,
             np.array(
