@@ -77,8 +77,10 @@ class TestPdw(unittest.TestCase):
         res = moving_average(data, 3)
         truth = np.array([2.0 / 3.0, 1.0, 7.0 / 3, 6.0 / 3.0])
         assert_array_almost_equal(res, truth)
+
+        data = np.array([1.0, 1, 1, 5, 1, 1, 1, 1])
         res = moving_average(data, 3)
-        truth = np.array([0, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
+        truth = np.array([2.0 / 3.0, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
         assert_array_almost_equal(res, truth)
 
 
