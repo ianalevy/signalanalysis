@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_array_almost_equal, assert_array_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from pulse_simulator import (
     Pdw,
@@ -24,7 +24,7 @@ class TestPdw(unittest.TestCase):
             np.array([2.1, 4.2, 6.5, 1.3]),
         )
         res = sampled_dw(pdw, 80)
-        assert_array_almost_equal(
+        assert_allclose(
             res.toa_s,
             np.array(
                 [
@@ -49,45 +49,45 @@ class TestPdw(unittest.TestCase):
         # order 1 does nothing
         res = moving_average(data, 1)
         truth = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         res = moving_average(data, 2)
         truth = np.array([1 / 2, 1, 1, 3.2 / 2, 7.7 / 2, 6.5 / 2, 1, 1, 1])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1, 1])
         res = moving_average(data, 3)
         truth = np.array([2 / 3, 1, 4.2 / 3, 8.7 / 3, 8.7 / 3, 7.5 / 3, 1, 1, 2 / 3])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         # window of size 8
         data = np.array([1.0, 1, 1, 2.2, 5.5, 1, 1, 1])
         # order 1 does nothing
         res = moving_average(data, 1)
         truth = np.array([1, 1, 1, 2.2, 5.5, 1, 1, 1])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         data = np.array([1.0, 1.0])
         res = moving_average(data, 3)
         truth = np.array([2.0 / 3.0, 2.0 / 3.0])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         data = np.array([1.0, 1, 1, 5])
         res = moving_average(data, 3)
         truth = np.array([2.0 / 3.0, 1.0, 7.0 / 3, 6.0 / 3.0])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
         data = np.array([1.0, 1, 1, 5, 1, 1, 1, 1])
         res = moving_average(data, 3)
         truth = np.array([2.0 / 3.0, 1, 7 / 3, 7 / 3, 7 / 3, 1, 1, 2 / 3])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
     def test_noise_filter(self):
         data = np.array([1.0, 1, 1, 5, 1, 1, 1, 1])
         res = noise_filter(data, 3)
         truth = np.array([1.0 / 3.0, 0.0, -4 / 3, 8 / 3, -4 / 3, 0, 0, 1.0 / 3])
-        assert_array_almost_equal(res, truth)
+        assert_allclose(res, truth)
 
 
 class TestAnalysis(unittest.TestCase):
@@ -117,7 +117,7 @@ class TestAnalysis(unittest.TestCase):
         (times, signal) = make_signal(0.1, 0.01, 3, 0.02)
         assert len(times) == 33
         stop = 3 * 0.1 + 0.02
-        assert_array_almost_equal(
+        assert_allclose(
             times,
             np.arange(0, stop, step=0.01),
         )
