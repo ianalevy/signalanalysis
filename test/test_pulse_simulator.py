@@ -7,6 +7,7 @@ from pulse_simulator import (
     Pdw,
     Pulse,
     find_diffs,
+    find_periods,
     frame_array,
     make_signal,
     moving_average,
@@ -28,6 +29,10 @@ class TestDiffs(unittest.TestCase):
             ),
         )
 
+    def test_find_periods(self):
+        data = np.array([1.5, 2.1, 3.2, 4.7, 4.9])
+        res = find_periods(data, num_pulses=4)
+        assert_allclose(res, np.array([]))
 
 class TestPdw(unittest.TestCase):
     def test_sample(self):

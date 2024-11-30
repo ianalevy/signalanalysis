@@ -227,9 +227,15 @@ def find_diffs(ar: np.ndarray) -> np.ndarray:
     return np.abs(np.ravel(all_diffs[np.triu_indices(ar.shape[0], 1)]))
 
 
+def find_periods(
+    toas: np.ndarray,
+    num_pulses: int = 5,
+) -> np.ndarray:
+    diffs = find_diffs(toas)
+    (hist, edges) = np.histogram(diffs)
 
-    """
-    return np.subtract.outer(ar, ar)
+    if np.max(hist) <= num_pulses:
+        return np.array([])
 
 
 @dataclass
