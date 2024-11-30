@@ -6,6 +6,7 @@ from numpy.testing import assert_allclose, assert_array_equal
 from pulse_simulator import (
     Pdw,
     Pulse,
+    find_diffs,
     frame_array,
     make_signal,
     moving_average,
@@ -13,6 +14,19 @@ from pulse_simulator import (
     sampled_dw,
     try_pris,
 )
+
+
+class TestDiffs(unittest.TestCase):
+    def test_diffs(self):
+        data = np.array([1.5, 2.1, 3.2, 4.7])
+        res = find_diffs(data)
+
+        assert_allclose(
+            res,
+            np.array(
+                [0.6, 1.7, 3.2, 1.1, 2.6, 1.5],
+            ),
+        )
 
 
 class TestPdw(unittest.TestCase):

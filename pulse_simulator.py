@@ -208,6 +208,30 @@ def try_pris(data: np.ndarray, sample_rate_s) -> tuple:
     return (pris_to_test, results)
 
 
+def find_diffs(ar: np.ndarray) -> np.ndarray:
+    """Find all pairwise differences between elements.
+
+    Computes absolute value of differences.
+
+    Parameters
+    ----------
+    ar : np.ndarray
+
+    Returns
+    -------
+    np.ndarray
+
+    """
+    all_diffs = np.subtract.outer(ar, ar)
+
+    return np.abs(np.ravel(all_diffs[np.triu_indices(ar.shape[0], 1)]))
+
+
+
+    """
+    return np.subtract.outer(ar, ar)
+
+
 @dataclass
 class Pdw:
     toa_s: np.array = field(default_factory=lambda: np.array([]))
