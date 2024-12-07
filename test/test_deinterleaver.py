@@ -3,16 +3,23 @@ import unittest
 import numpy as np
 from numpy.testing import assert_allclose
 
-from deinterleaver import deinterleave_bursts
+from deinterleaver import indices_matching, indices_to_pulse_pairs
 
 
 class TestDeinterleaver(unittest.TestCase):
     def test_1(self):
-        toa1 = np.array([4.5, 5.6, 12.3, 13.4, 14.5])
-        toa2 = np.array([4.51, 5.61, 12.31, 13.41, 14.51])
+        toa1 = np.array([3.4, 4.5, 5.6, 12.3, 13.4, 14.5, 21.2])
+        toa2 = np.array([4.51, 5.2, 5.61, 12.31, 13.41, 14.51])
 
-        res = deinterleave_bursts(toa1, toa2)
-        print(res)
+        res = indices_matching(toa1, toa2, tol=0.1)
+
+        assert_allclose(
+            res,
+            np.array(
+                [[4.5, 4.51], [5.6, 5.61], [12.3, 12.31], [13.4, 13.41], [14.5, 14.51]],
+            ),
+        )
+
 
     def test_indices_to_pulses(self):
         in1 = np.array([11, 7, 3, 5, 9, 21])
