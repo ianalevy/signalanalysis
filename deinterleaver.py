@@ -1,8 +1,27 @@
 import numpy as np
 
 
-def deinterleave_bursts(toa1: np.ndarray, toa2: np.ndarray):
-    return toa1
+def indices_to_pulse_pairs(
+    in1: np.ndarray,
+    in2: np.ndarray,
+    matches: np.ndarray,
+) -> np.ndarray:
+    """Get columns of pairs from indices.
+
+    Parameters
+    ----------
+    in1 : np.ndarray
+    in2 : np.ndarray
+        _description_
+    matches : np.ndarray
+        indices of matching pairs
+
+    Returns
+    -------
+    np.ndarray
+
+    """
+    return np.column_stack((in1[matches[:, 0]], in2[matches[:, 1]]))
 
 
 if __name__ == "__main__":
