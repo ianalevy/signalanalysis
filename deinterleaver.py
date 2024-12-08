@@ -4,7 +4,7 @@ import numpy as np
 def indices_to_pulse_pairs(
     in1: np.ndarray,
     in2: np.ndarray,
-    matches: np.ndarray,
+    matches: list | np.ndarray,
 ) -> np.ndarray:
     """Get columns of pairs from indices.
 
@@ -13,7 +13,7 @@ def indices_to_pulse_pairs(
     in1 : np.ndarray
     in2 : np.ndarray
         _description_
-    matches : np.ndarray
+    matches : list | np.ndarray
         indices of matching pairs
 
     Returns
@@ -21,6 +21,8 @@ def indices_to_pulse_pairs(
     np.ndarray
 
     """
+    if isinstance(matches, list):
+        matches = np.array(matches)
     return np.column_stack((in1[matches[:, 0]], in2[matches[:, 1]]))
 
 
