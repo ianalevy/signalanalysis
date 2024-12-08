@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.testing import assert_allclose
 
-from deinterleaver import indices_matching, indices_to_pulse_pairs
+from deinterleaver import deinterleave_pairs, indices_to_pulse_pairs
 
 
 class TestDeinterleaver(unittest.TestCase):
@@ -18,12 +18,24 @@ class TestDeinterleaver(unittest.TestCase):
         toa1 = np.array([3.4, 4.5, 5.6, 12.3, 13.4, 14.5, 21.2])
         toa2 = np.array([4.51, 5.2, 5.61, 12.31, 13.41, 14.51])
 
-        res = indices_matching(toa1, toa2, tol=0.1)
+        res = deinterleave_pairs(toa1, toa2, tol=0.1)
 
         assert_allclose(
             res,
             np.array(
                 [[4.5, 4.51], [5.6, 5.61], [12.3, 12.31], [13.4, 13.41], [14.5, 14.51]],
+            ),
+        )
+
+        # smaller tolerance
+        toa1 = np.array([3.4, 4.5, 5.4, 12.25, 13.4, 14.5, 21.2])
+        toa2 = np.array([4.52, 5.2, 5.66, 12.31, 13.41, 14.53])
+        res = deinterleave_pairs(toa1, toa2, tol=0.04)
+
+        assert_allclose(
+            res,
+            np.array(
+                [[4.5, 4.52], [13.4, 13.41], [14.5, 14.53]],
             ),
         )
 
