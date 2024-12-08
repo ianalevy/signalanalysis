@@ -29,6 +29,8 @@ def indices_to_pulse_pairs(
 def deinterleave_pairs(toa1: np.ndarray, toa2: np.ndarray, tol=0.01) -> np.ndarray:
     """Deinterleave pairs within tolerance.
 
+    For each time in toa1 searches toa2 for nearerst time within tolerance.
+
     Parameters
     ----------
     toa1 : np.ndarray
@@ -43,9 +45,9 @@ def deinterleave_pairs(toa1: np.ndarray, toa2: np.ndarray, tol=0.01) -> np.ndarr
     """
     match_indices = []
     for in1, time in np.ndenumerate(toa1):
-        indices = np.argwhere(np.abs(toa2 - time) < tol)
-        if len(indices > 0):
-            match_indices.append([in1[0], indices[0][0].tolist()])
+        new_match = np.argmin(np.abs(toa2 - time))
+        if np.abs(toa2[new_match] - time) < tol:
+            match_indices.append([in1[0], new_match])
 
     return indices_to_pulse_pairs(toa1, toa2, match_indices)
 

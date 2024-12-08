@@ -14,7 +14,7 @@ class TestDeinterleaver(unittest.TestCase):
         res = indices_to_pulse_pairs(in1, in2, matches)
         assert_allclose(res, np.array([[3, 6], [5, 12], [21, 16]]))
 
-    def test_1(self):
+    def test_deinterleave(self):
         toa1 = np.array([3.4, 4.5, 5.6, 12.3, 13.4, 14.5, 21.2])
         toa2 = np.array([4.51, 5.2, 5.61, 12.31, 13.41, 14.51])
 
@@ -39,9 +39,27 @@ class TestDeinterleaver(unittest.TestCase):
             ),
         )
 
+    def test_2(self):
         # now case where multiple within tolerance
-        toa1 = np.array([3.4, 4.5, 5.6, 12.3, 13.4, 14.5])
-        toa2 = np.array([4.53, 4.51, 12.31, 13.41, 14.51])
+        toa1 = np.array([3.4, 4.5, 5.6, 12.3, 13.4, 14.5, 15.62, 15.61])
+        toa2 = np.array([4.53, 4.51, 12.31, 13.41, 14.51, 15.6])
+
+        res = deinterleave_pairs(toa1, toa2, tol=0.04)
+        print(res)
+
+        assert_allclose(
+            res,
+            np.array(
+                [
+                    [4.5, 4.51],
+                    [12.3, 12.31],
+                    [13.4, 13.41],
+                    [14.5, 14.51],
+                    [15.62, 15.6],
+                    [15.61, 15.6],
+                ],
+            ),
+        )
 
 
 if __name__ == "__main__":
