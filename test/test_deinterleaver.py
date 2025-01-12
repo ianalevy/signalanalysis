@@ -62,5 +62,14 @@ class TestDeinterleaver(unittest.TestCase):
         )
 
 
+class TestPrecisePri(unittest.TestCase):
+    def test_find_next_match(self):
+        data = np.array([1.5, 3.01, 3.3, 3.4, 4.52, 5.2, 6.7, 7.1, 7.2, 8.21, 8.7])
+        res = find_next_match(data, 1.5, 1, 0.001)
+        assert len(res) == 0
+
+        res = find_next_match(data, 1.5, 1, 0.01)
+        assert res == [4]
+
 if __name__ == "__main__":
     unittest.main()
