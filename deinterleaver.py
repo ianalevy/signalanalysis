@@ -52,5 +52,38 @@ def deinterleave_pairs(toa1: np.ndarray, toa2: np.ndarray, tol=0.01) -> np.ndarr
     return indices_to_pulse_pairs(toa1, toa2, match_indices)
 
 
+def find_next_match(
+    pulses: np.ndarray,
+    rough_pri: float,
+    start_index: int,
+    tol: float = 0.1,
+) -> list:
+    """Find next matching pulse in group to tol.
+
+    Parameters
+    ----------
+    pulses : np.ndarray
+        _description_
+    rough_pri : float
+        _description_
+    start_index : int
+        _description_
+    tol : float, optional
+        _description_, by default 0.1
+
+    Returns
+    -------
+    list
+
+    """
+    group_start = pulses[start_index]
+    later_pulses = pulses[start_index + 1 :]
+    diffs = np.abs((later_pulses - group_start) - rough_pri)
+
+    return np.where(diffs < tol)[0] + start_index + 1
+
+
+
+
 if __name__ == "__main__":
     print("hello")
