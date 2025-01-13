@@ -83,6 +83,43 @@ def find_next_match(
     return np.where(diffs < tol)[0] + start_index + 1
 
 
+def find_pri_pairs(toas: np.ndarray, rough_pri: float, tol: float = 0.1) -> list:
+    pulse_groups = []
+    num_toas = len(toas)
+    for start_index in range(num_toas - 1):
+        matches = find_next_match(toas, rough_pri, start_index, tol=tol)
+        if len(matches) > 0:
+            pulse_groups.append([start_index, matches[0]])
+    return pulse_groups
+
+
+def pairs_to_list(pairs: list) -> np.ndarray:
+    """Convert pairs to list of groups.
+
+    Parameters
+    ----------
+    pairs : list
+        _description_
+
+    Returns
+    -------
+    np.ndarray
+        _description_
+
+    """
+    last_end = -1
+    good_indices = [[]]
+    for start, end in pairs:
+        if start == last_end:
+            good_indices[-1].append(end)
+        elif start > last_end:
+            good_indices[-1] += [start, end]
+
+        else:
+            good_indices.append([start, end])
+        last_end = end
+
+    return good_indices
 
 
 if __name__ == "__main__":

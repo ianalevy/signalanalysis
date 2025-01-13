@@ -1,9 +1,16 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_almost_equal, assert_array_equal
 
-from deinterleaver import deinterleave_pairs, indices_to_pulse_pairs
+from deinterleaver import (
+    deinterleave_pairs,
+    find_next_match,
+    find_pri_pairs,
+    find_pulse_groups,
+    indices_to_pulse_pairs,
+    pairs_to_list,
+)
 
 
 class TestDeinterleaver(unittest.TestCase):
@@ -71,5 +78,13 @@ class TestPrecisePri(unittest.TestCase):
         res = find_next_match(data, 1.5, 1, 0.01)
         assert res == [4]
 
+    def test_pairs_to_list(self):
+        pairs = [[0, 1], [1, 4], [5, 6], [6, 9], [7, 10], [8, 10]]
+        cor = [[0, 1, 4, 5, 6, 9], [7, 10], [8, 10]]
+        res = pairs_to_list(pairs)
+        assert len(res) == 3
+        assert_array_equal(res[0], cor[0])
+        assert_array_equal(res[1], cor[1])
+        assert_array_equal(res[2], cor[2])
 if __name__ == "__main__":
     unittest.main()
