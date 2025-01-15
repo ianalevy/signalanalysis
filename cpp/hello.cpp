@@ -41,7 +41,7 @@ int my_add(int len)
 
 int main()
 {
-    int res = sum_squares(50);
+    int res = sum_exps(50, 5);
     std::cout << res << std::endl;
 
     return 0;
