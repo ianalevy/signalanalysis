@@ -1,4 +1,5 @@
 import numpy as np
+import polars as pl
 
 
 def indices_to_pulse_pairs(
@@ -120,6 +121,31 @@ def pairs_to_list(pairs: list) -> np.ndarray:
         last_end = end
 
     return good_indices
+
+
+def remove_dupes(df: pl.DataFrame, tol: int = 5) -> pl.DataFrame:
+    """Remove duplicates near enough in time.
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        _description_
+    tol : int, optional
+        _description_, by default 5
+
+    Returns
+    -------
+    pl.DataFrame
+
+    """
+    df = df.with_columns(pl.col("toa").diff().fill_null(2 * tol).alias("deltas"))
+    df = df.with_columns(
+        pl.when(pl.col("deltas") > tol).then(1).otherwise(0).alias("jumps"),
+    )
+
+    df = df.filter(pl.col("jumps") == 1).drop(["deltas", "jumps"])
+
+    return df
 
 
 if __name__ == "__main__":

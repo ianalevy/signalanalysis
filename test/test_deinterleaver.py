@@ -1,16 +1,49 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_allclose, assert_array_almost_equal, assert_array_equal
+import polars as pl
+from numpy.testing import assert_allclose
+from polars.testing import assert_frame_equal
 
 from deinterleaver import (
     deinterleave_pairs,
     find_next_match,
-    find_pri_pairs,
-    find_pulse_groups,
     indices_to_pulse_pairs,
-    pairs_to_list,
+    remove_dupes,
 )
+
+
+class TestUtils(unittest.TestCase):
+    def test_remove_dupes(self):
+        data = pl.DataFrame(
+            {"toa": [2, 10, 11, 25, 50, 51, 52], "id": [3, 0, 1, 1, 1, 0, 2]},
+        )
+        res = remove_dupes(data)
+
+        assert_frame_equal(
+            res,
+            pl.DataFrame({"toa": [2, 10, 25, 50], "id": [3, 0, 1, 1]}),
+        )
+
+        data = pl.DataFrame(
+            {"toa": [10, 11, 25, 50, 51, 52], "id": [0, 1, 1, 1, 0, 2]},
+        )
+        res = remove_dupes(data)
+
+        assert_frame_equal(
+            res,
+            pl.DataFrame({"toa": [10, 25, 50], "id": [0, 1, 1]}),
+        )
+
+        data = pl.DataFrame(
+            {"toa": [10, 11, 25, 50, 51, 54], "id": [0, 1, 1, 1, 0, 2]},
+        )
+        res = remove_dupes(data, tol=2)
+
+        assert_frame_equal(
+            res,
+            pl.DataFrame({"toa": [10, 25, 50, 54], "id": [0, 1, 1, 2]}),
+        )
 
 
 class TestDeinterleaver(unittest.TestCase):
