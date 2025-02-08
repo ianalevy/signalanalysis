@@ -228,8 +228,7 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     df = (
         pl.concat([match_next, match_pre])
         .sort("toa")
-        .with_columns(pl.col("toa").diff().fill_null(tol).alias("foo"))
-        .filter(pl.col("foo").abs() > 0)
+        .filter(pl.col("toa").diff().fill_null(tol).abs() > 0)
     )
 
     return df.drop(
@@ -239,7 +238,6 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
         "next_right",
         "toa_right",
         "pre_right",
-        "foo",
     )
 
 
