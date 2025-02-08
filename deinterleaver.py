@@ -203,8 +203,14 @@ def remove_dupes(df: pl.DataFrame, tol: int = 5, rf_tol: float = 10) -> pl.DataF
     return df
 
 
-def compute_pri(df: pl.DataFrame) -> pl.DataFrame:
-    return df
+def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
+    df = df.with_columns(
+        (pl.col("toa") + pri).shift(1).alias("next"),
+    ).filter((pl.col("toa") - pl.col("next")).abs() < tol)
+
+    print(df)
+
+    return df.drop("next")
 
 
 if __name__ == "__main__":
