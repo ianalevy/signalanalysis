@@ -251,11 +251,30 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     )
 
 
-def group_by_burst(df: pl.DataFrame) -> pl.DataFrame:
-    df = df.with_columns(pl.col("toa").diff().fill_null(0).alias("foo"))
-    print(df)
+def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFrame:
+    """Group bursts.
 
-    return df
+    Parameters
+    ----------
+    df : pl.DataFrame
+        _description_
+    pri : float
+        _description_
+    tol : float, optional
+        _description_, by default 0.01
+
+    Returns
+    -------
+    pl.DataFrame
+        _description_
+
+    """
+    return df.with_columns(
+        ((pl.col("toa").diff().fill_null(pri) - pri).abs() > tol)
+        .cum_sum()
+        .cast(pl.Int64)
+        .alias("burst_group"),
+    )
 
 
 if __name__ == "__main__":

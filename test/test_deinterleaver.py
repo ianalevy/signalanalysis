@@ -168,7 +168,7 @@ class TestPrecisePri(unittest.TestCase):
                 "rf": [1, 2, 3, 4, 5],
             },
         )
-        res = group_by_burst(data)
+        res = group_by_burst(data, 1.1)
 
         assert_frame_equal(
             res,
