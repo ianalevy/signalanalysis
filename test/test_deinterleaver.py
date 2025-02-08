@@ -107,17 +107,18 @@ class TestPrecisePri(unittest.TestCase):
     def test_filter_by_pri(self):
         data = pl.DataFrame(
             {
-                "toa": [10.0, 12.5, 15.0, 15.2, 17.5, 23, 24, 26.5, 29],
+                "toa": [10.0, 12.52, 14.99, 15.2, 17.5, 23, 24, 26.5, 29],
             },
         )
 
         res = filter_by_pri(data, 2.5)
+        print(res)
 
         assert_frame_equal(
             res,
             pl.DataFrame(
                 {
-                    "toa": [10.0, 12.5, 15.0, 17.5, 24, 26.5, 29],
+                    "toa": [10.0, 12.52, 14.99, 17.5, 24, 26.5, 29],
                 },
             ),
         )

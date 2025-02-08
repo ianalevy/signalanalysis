@@ -205,12 +205,21 @@ def remove_dupes(df: pl.DataFrame, tol: int = 5, rf_tol: float = 10) -> pl.DataF
 
 def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
     df = df.with_columns(
-        (pl.col("toa") + pri).shift(1).alias("next"),
-    ).filter((pl.col("toa") - pl.col("next")).abs() < tol)
+        (pl.col("toa") + pri).alias("next"),
+        (pl.col("toa") - pri).alias("pre"),
+    )
+
+    df = df.join_asof(
+        df.rename({"toa": "toa_right"}),
+        left_on="next",
+        right_on="toa_right",
+        strategy="nearest",
+        coalesce=False,
+        tolerance=tol,
+    ).filter(pl.col("toa_right").is_not_null())
 
     print(df)
-
-    return df.drop("next")
+    return df.drop("next", "pre", "toa_right", "next_right", "toa_right", "pre_right")
 
 
 if __name__ == "__main__":
