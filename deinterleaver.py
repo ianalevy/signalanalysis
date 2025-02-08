@@ -204,6 +204,22 @@ def remove_dupes(df: pl.DataFrame, tol: int = 5, rf_tol: float = 10) -> pl.DataF
 
 
 def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
+    """Fitler for pulses that match the PRI.
+
+    Parameters
+    ----------
+    df : pl.DataFrame
+        _description_
+    pri : float
+        _description_
+    tol : float, optional
+        _description_, by default 0.1
+
+    Returns
+    -------
+    pl.DataFrame
+
+    """
     match_next = (
         df.with_columns((pl.col("toa") + pri).alias("next"))
         .join_asof(
@@ -215,6 +231,7 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
         )
         .filter(pl.col("toa_right").is_not_null())
     ).drop("toa_right", "next")
+
     match_pre = (
         df.with_columns((pl.col("toa") - pri).alias("pre"))
         .join_asof(
@@ -226,9 +243,6 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
         )
         .filter(pl.col("toa_right").is_not_null())
     ).drop("toa_right", "pre")
-
-    print(match_next)
-    print(match_pre)
 
     return (
         pl.concat([match_next, match_pre])
