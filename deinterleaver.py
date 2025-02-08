@@ -277,5 +277,15 @@ def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFr
     )
 
 
+def burst_stats(df: pl.DataFrame) -> pl.DataFrame:
+    df = df.group_by("burst_group").agg(
+        pl.col("toa").diff().mean().alias("mean"),
+        pl.col("toa").diff().std().alias("std"),
+        pl.col("rf"),
+    )
+
+    return df
+
+
 if __name__ == "__main__":
     print("hello")
