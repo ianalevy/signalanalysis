@@ -108,6 +108,7 @@ class TestPrecisePri(unittest.TestCase):
         data = pl.DataFrame(
             {
                 "toa": [10.0, 12.52, 14.99, 15.2, 17.71, 23, 24, 26.5, 29],
+                "rf": [1, 2, 1, 1, 1, 2, 5, 9, 2],
             },
         )
 
@@ -118,6 +119,7 @@ class TestPrecisePri(unittest.TestCase):
             pl.DataFrame(
                 {
                     "toa": [10.0, 12.52, 14.99, 15.2, 17.71, 24, 26.5, 29],
+                    "rf": [1, 2, 1, 1, 1, 5, 9, 2],
                 },
             ),
         )
