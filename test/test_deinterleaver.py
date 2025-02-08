@@ -6,8 +6,10 @@ from numpy.testing import assert_allclose
 from polars.testing import assert_frame_equal
 
 from deinterleaver import (
+    burst_stats,
     deinterleave_pairs,
     filter_by_pri,
+    group_by_burst,
     indices_to_pulse_pairs,
 )
 
@@ -181,6 +183,28 @@ class TestPrecisePri(unittest.TestCase):
             ),
         )
 
+    def test_burst_stats(self):
+        data = pl.DataFrame(
+            {
+                "toa": [10.5, 11.62, 15, 16.11, 17.2, 18.32],
+                "rf": [1, 2, 3, 4, 5, 6],
+                "burst_group": [0, 0, 1, 1, 1, 1],
+            },
+        )
+
+        res = burst_stats(data)
+        assert_frame_equal(
+            res,
+            pl.DataFrame(
+                {
+                    "burst_group": [0, 1],
+                    "mean": [1.12, 1.1066666],
+                    "rf": [[1, 2], [3, 4, 5, 6]],
+                },
+            ),
+        )
+
 
 if __name__ == "__main__":
+    pl.Config(tbl_rows=-1)
     unittest.main()
