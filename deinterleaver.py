@@ -251,5 +251,12 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     )
 
 
+def group_by_burst(df: pl.DataFrame) -> pl.DataFrame:
+    df = df.with_columns(pl.col("toa").diff().fill_null(0).alias("foo"))
+    print(df)
+
+    return df
+
+
 if __name__ == "__main__":
     print("hello")
