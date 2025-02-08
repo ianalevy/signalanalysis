@@ -207,9 +207,9 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     match_next = (
         df.with_columns((pl.col("toa") + pri).alias("next"))
         .join_asof(
-            df.rename({"toa": "toa_right"}),
+            df,
             left_on="next",
-            right_on="toa_right",
+            right_on="toa",
             strategy="nearest",
             coalesce=False,
             tolerance=tol,
@@ -219,9 +219,9 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     match_pre = (
         df.with_columns((pl.col("toa") - pri).alias("pre"))
         .join_asof(
-            df.rename({"toa": "toa_right"}),
+            df,
             left_on="pre",
-            right_on="toa_right",
+            right_on="toa",
             strategy="nearest",
             coalesce=False,
             tolerance=tol,
