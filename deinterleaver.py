@@ -204,40 +204,38 @@ def remove_dupes(df: pl.DataFrame, tol: int = 5, rf_tol: float = 10) -> pl.DataF
 
 
 def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
-    df = df.with_columns(
-        (pl.col("toa") + pri).alias("next"),
-        (pl.col("toa") - pri).alias("pre"),
-    )
-    match_next = df.join_asof(
-        df.rename({"toa": "toa_right"}),
-        left_on="next",
-        right_on="toa_right",
-        strategy="nearest",
-        coalesce=False,
-        tolerance=tol,
-    ).filter(pl.col("toa_right").is_not_null())
-    match_pre = df.join_asof(
-        df.rename({"toa": "toa_right"}),
-        left_on="pre",
-        right_on="toa_right",
-        strategy="nearest",
-        coalesce=False,
-        tolerance=tol,
-    ).filter(pl.col("toa_right").is_not_null())
+    match_next = (
+        df.with_columns((pl.col("toa") + pri).alias("next"))
+        .join_asof(
+            df.rename({"toa": "toa_right"}),
+            left_on="next",
+            right_on="toa_right",
+            strategy="nearest",
+            coalesce=False,
+            tolerance=tol,
+        )
+        .filter(pl.col("toa_right").is_not_null())
+    ).drop("toa_right", "next")
+    match_pre = (
+        df.with_columns((pl.col("toa") - pri).alias("pre"))
+        .join_asof(
+            df.rename({"toa": "toa_right"}),
+            left_on="pre",
+            right_on="toa_right",
+            strategy="nearest",
+            coalesce=False,
+            tolerance=tol,
+        )
+        .filter(pl.col("toa_right").is_not_null())
+    ).drop("toa_right", "pre")
 
-    df = (
+    print(match_next)
+    print(match_pre)
+
+    return (
         pl.concat([match_next, match_pre])
         .sort("toa")
         .filter(pl.col("toa").diff().fill_null(tol).abs() > 0)
-    )
-
-    return df.drop(
-        "next",
-        "pre",
-        "toa_right",
-        "next_right",
-        "toa_right",
-        "pre_right",
     )
 
 
