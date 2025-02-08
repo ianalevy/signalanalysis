@@ -123,7 +123,62 @@ def pairs_to_list(pairs: list) -> np.ndarray:
     return good_indices
 
 
-def remove_dupes(df: pl.DataFrame, tol: int = 5) -> pl.DataFrame:
+def find_pulse_groups(
+    toas: np.ndarray,
+    pulse_groups: list,
+    pulse_gap: float = 0.1,
+) -> list:
+    bursts = []
+    for group in pulse_groups:
+        group_toas = toas[group]
+        print(group_toas)
+        deltas = np.diff(group_toas)
+        print(deltas)
+    # pulse_groups = []
+
+    # group_start = pulse_groups[0][0]
+    # pulse_groups.append([group_start])
+    # for pulse_pair in pulse_groups:
+    #     duration = toas[pulse_pair[1]] - toas[group_start]
+    #     if duration < pulse_gap:
+    #         pulse_groups.append(pulse_pair[1])
+    #     else:
+    #         pulse_groups.append([pulse_pair])
+
+    return bursts
+
+
+def find_precise_pri(toas: np.ndarray, rough_pri: float, tol: float = 0.1) -> list:
+    pulse_groups = []
+    num_toas = len(toas)
+    for start_index in range(num_toas - 1):
+        print(start_index)
+        matches = find_next_match(toas, rough_pri, start_index, tol=tol)
+        print(matches)
+        if len(matches) > 0:
+            pulse_groups.append([start_index, matches[0]])
+        # if len(matches) > 0:
+        #     last_match = matches[0]
+        #     pulse_groups.append([start_index, last_match])
+        #     current_index = last_match
+        #     elapsed_time = 0
+        #     current_index = last_match
+        #     while (current_index < len(toas)) and (elapsed_time) < rough_pri + tol:
+        #         next_match = find_next_match(toas, rough_pri, current_index, tol=tol)
+        #         if len(next_match) > 0:
+        #             last_match = next_match[0]
+        #             pulse_groups[-1].append(last_match)
+        #             current_index = last_match
+        #         else:
+        #             current_index += 1
+        #             if current_index < len(toas):
+        #                 elapsed_time = toas[current_index] - toas[last_match]
+        #                 print(elapsed_time)
+
+    return pulse_groups
+
+
+def remove_dupes(df: pl.DataFrame, tol: int = 5, rf_tol: float = 10) -> pl.DataFrame:
     """Remove duplicates near enough in time.
 
     Parameters
@@ -145,6 +200,10 @@ def remove_dupes(df: pl.DataFrame, tol: int = 5) -> pl.DataFrame:
 
     df = df.filter(pl.col("jumps") == 1).drop(["deltas", "jumps"])
 
+    return df
+
+
+def compute_pri(df: pl.DataFrame) -> pl.DataFrame:
     return df
 
 
