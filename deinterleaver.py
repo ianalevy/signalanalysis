@@ -208,8 +208,7 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
         (pl.col("toa") + pri).alias("next"),
         (pl.col("toa") - pri).alias("pre"),
     )
-
-    df = df.join_asof(
+    match_next = df.join_asof(
         df.rename({"toa": "toa_right"}),
         left_on="next",
         right_on="toa_right",
@@ -217,9 +216,31 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
         coalesce=False,
         tolerance=tol,
     ).filter(pl.col("toa_right").is_not_null())
+    match_pre = df.join_asof(
+        df.rename({"toa": "toa_right"}),
+        left_on="pre",
+        right_on="toa_right",
+        strategy="nearest",
+        coalesce=False,
+        tolerance=tol,
+    ).filter(pl.col("toa_right").is_not_null())
 
-    print(df)
-    return df.drop("next", "pre", "toa_right", "next_right", "toa_right", "pre_right")
+    df = (
+        pl.concat([match_next, match_pre])
+        .sort("toa")
+        .with_columns(pl.col("toa").diff().fill_null(tol).alias("foo"))
+        .filter(pl.col("foo").abs() > 0)
+    )
+
+    return df.drop(
+        "next",
+        "pre",
+        "toa_right",
+        "next_right",
+        "toa_right",
+        "pre_right",
+        "foo",
+    )
 
 
 if __name__ == "__main__":
