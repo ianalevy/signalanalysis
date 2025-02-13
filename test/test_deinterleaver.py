@@ -122,7 +122,7 @@ class TestPrecisePri(unittest.TestCase):
             pl.DataFrame(
                 {
                     "toa": [2, 4, 5, 10, 15],
-                    "rf": [1, 2, 3, 4, 5],
+                    "rf": [1, 2, 1, 2, 3],
                     "burst_group": [0, 0, 1, 1, 1],
                 },
             ),
@@ -134,7 +134,7 @@ class TestPrecisePri(unittest.TestCase):
             pl.DataFrame(
                 {
                     "toa": [2, 4, 5, 10, 15, 22, 24, 26],
-                    "rf": [1, 2, 3, 4, 5, 4, 5, 6],
+                    "rf": [1, 2, 1, 2, 3, 4, 5, 6],
                     "burst_group": [0, 0, 1, 1, 1, 2, 2, 2],
                 },
             ),
