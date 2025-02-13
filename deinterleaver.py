@@ -108,7 +108,11 @@ def burst_stats(df: pl.DataFrame) -> pl.DataFrame:
     ).sort("burst_group")
 
 
-def remove_duplicates(groups: list) -> pl.DataFrame:
+def remove_duplicates(
+    groups: list,
+    burst_col: str = "burst_group",
+    time_col: str = "toa",
+) -> pl.DataFrame:
     """Remove duplicate entries from the DataFrame based on 'toa' and 'rf' columns.
 
     Parameters
@@ -122,17 +126,33 @@ def remove_duplicates(groups: list) -> pl.DataFrame:
         DataFrame without duplicates.
 
     """
-    results = []
-    for idx, group in enumerate(groups):
-        results.append(
+    combined: pl.DataFrame = pl.concat(
+        [
             group.with_columns(
-                (f"{idx}_" + pl.col("burst_group").cast(pl.String)).alias(
-                    "burst_group",
+                (f"{idx}_" + pl.col(burst_col).cast(pl.String)).alias(
+                    burst_col,
                 ),
-            ),
-        )
+            )
+            for idx, group in enumerate(groups)
+        ],
+    ).sort(burst_col, descending=False)
 
-    return pl.concat(results)
+    toas_found = []
+    unique_groups = []
+
+    for name, group in combined.group_by(burst_col):
+        new_toas = group[time_col].to_list()
+        if new_toas not in toas_found:
+            toas_found.append(new_toas)
+            unique_groups.append(group)
+
+    return (
+        pl.concat(unique_groups)
+        .sort(time_col)
+        .with_columns(
+            pl.col("burst_group").rle_id().alias("burst_group").cast(pl.Int64),
+        )
+    )
 
 
 if __name__ == "__main__":
