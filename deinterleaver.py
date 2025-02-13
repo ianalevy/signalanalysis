@@ -108,5 +108,32 @@ def burst_stats(df: pl.DataFrame) -> pl.DataFrame:
     ).sort("burst_group")
 
 
+def remove_duplicates(groups: list) -> pl.DataFrame:
+    """Remove duplicate entries from the DataFrame based on 'toa' and 'rf' columns.
+
+    Parameters
+    ----------
+    data : pl.DataFrame
+        Input DataFrame with possible duplicates.
+
+    Returns
+    -------
+    pl.DataFrame
+        DataFrame without duplicates.
+
+    """
+    results = []
+    for idx, group in enumerate(groups):
+        results.append(
+            group.with_columns(
+                (f"{idx}_" + pl.col("burst_group").cast(pl.String)).alias(
+                    "burst_group",
+                ),
+            ),
+        )
+
+    return pl.concat(results)
+
+
 if __name__ == "__main__":
     print("hello")

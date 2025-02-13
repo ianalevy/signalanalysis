@@ -7,6 +7,7 @@ from deinterleaver import (
     burst_stats,
     filter_by_pri,
     group_by_burst,
+    remove_duplicates,
 )
 
 
@@ -105,6 +106,38 @@ class TestPrecisePri(unittest.TestCase):
                     "burst_group": [0, 1],
                     "mean": [1.12, 1.1066666],
                     "rf": [[1, 2], [3, 4, 5, 6]],
+                },
+            ),
+        )
+
+    def test_remove_duplicates(self):
+        data = [
+            pl.DataFrame(
+                {
+                    "toa": [5, 10, 15, 22, 24, 26],
+                    "rf": [1, 2, 3, 4, 5, 6],
+                    "burst_group": [0, 0, 0, 1, 1, 1],
+                },
+            ),
+            pl.DataFrame(
+                {
+                    "toa": [2, 4, 5, 10, 15, 20],
+                    "rf": [1, 2, 3, 4, 5, 6],
+                    "burst_group": [0, 0, 1, 1, 1, 1],
+                },
+            ),
+        ]
+
+        res = remove_duplicates(data)
+        print(res)
+        assert 4 == 5
+        assert_frame_equal(
+            res,
+            pl.DataFrame(
+                {
+                    "toa": [10.5, 11.62, 15, 16.11, 17.2, 18.32],
+                    "rf": [1, 2, 3, 4, 5, 6],
+                    "burst_group": [0, 0, 1, 1, 2, 2],
                 },
             ),
         )
