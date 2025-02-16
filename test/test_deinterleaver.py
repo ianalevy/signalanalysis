@@ -142,6 +142,25 @@ class TestPrecisePri(unittest.TestCase):
             ),
         )
 
+        data = pl.DataFrame(
+            {
+                "toa": [10.5, 11.7, 15, 15.9, 17.5],
+                "rf": [1, 2, 3, 4, 5],
+            },
+        )
+        res = group_by_burst(data, 1.1, min_num_pulses=2, tol=0.3)
+
+        assert_frame_equal(
+            res,
+            pl.DataFrame(
+                {
+                    "toa": [10.5, 11.7, 15, 15.9],
+                    "rf": [1, 2, 3, 4],
+                    "burst_group": [0, 0, 1, 1],
+                },
+            ),
+        )
+
     def test_burst_stats(self):
         data = pl.DataFrame(
             {
