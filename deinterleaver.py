@@ -74,6 +74,30 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     )
 
 
+def find_burst_starts(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
+    toas = df.select("toa").to_numpy()
+    last_toa = toas[0]
+    burst_starts = [[last_toa]]
+    for toa in toas[1:]:
+        for burst in burst_starts:
+            if np.min(np.abs((toa - pri) - burst)) < tol:
+                burst.append(toa)
+                break
+        else:
+            burst_starts.append([toa])
+
+    burst_starts = [np.concat(_) for _ in burst_starts]
+    bgs = []
+    for idx, bg in enumerate(burst_starts):
+        bgs.append(
+            df.filter(pl.col("toa").is_in(pl.Series(values=bg))).with_columns(
+                pl.Series("burst_group", [idx for _ in range(len(bg))]),
+            ),
+        )
+
+    return pl.concat(bgs)
+
+
 def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFrame:
     """Group bursts.
 
