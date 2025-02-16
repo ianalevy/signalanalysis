@@ -1,4 +1,3 @@
-import numpy as np
 import polars as pl
 
 
@@ -75,7 +74,7 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     )
 
 
-def find_burst_starts(
+def group_by_burst(
     df: pl.DataFrame,
     pri: float,
     tol: float = 0.1,
@@ -90,13 +89,15 @@ def find_burst_starts(
     )
     toas = df.select(time_col).to_numpy()
     for idx, toa in enumerate(toas):
-        foo = df.filter(pl.col(burst_col) > -1).with_columns(
+        bursts_found = df.filter(pl.col(burst_col) > -1).with_columns(
             (toa - pri - pl.col(time_col)).abs().min().over(burst_col).alias("dist"),
         )
-        if (len(foo) == 0) or (foo["dist"].min() > tol):
+        if (len(bursts_found) == 0) or (bursts_found["dist"].min() > tol):
             df[idx, burst_col] = max(df[burst_col]) + 1
         else:
-            matching_group = foo.sort("dist").select(pl.first(burst_col)).item()
+            matching_group = (
+                bursts_found.sort("dist").select(pl.first(burst_col)).item()
+            )
             df[idx, burst_col] = matching_group
 
     # now drop bursts of length 1 and reindex
@@ -107,32 +108,6 @@ def find_burst_starts(
         )
         .sort(burst_col)
         .with_columns(pl.col(burst_col).rle_id().cast(pl.Int64))
-    )
-
-
-def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFrame:
-    """Group bursts.
-
-    Parameters
-    ----------
-    df : pl.DataFrame
-        _description_
-    pri : float
-        _description_
-    tol : float, optional
-        _description_, by default 0.01
-
-    Returns
-    -------
-    pl.DataFrame
-        _description_
-
-    """
-    return df.with_columns(
-        ((pl.col("toa").diff().fill_null(pri) - pri).abs() > tol)
-        .cum_sum()
-        .cast(pl.Int64)
-        .alias("burst_group"),
     )
 
 
