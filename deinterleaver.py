@@ -79,28 +79,32 @@ def find_burst_starts(
     pri: float,
     tol: float = 0.1,
     min_num_pulses: int = 5,
+    time_col: str = "toa",
+    burst_col: str = "burst_group",
 ) -> pl.DataFrame:
-    toas = df.select("toa").to_numpy()
-    last_toa = toas[0]
-    burst_starts = [[last_toa]]
-    for toa in toas[1:]:
-        for burst in burst_starts:
-            if np.min(np.abs((toa - pri) - burst)) < tol:
-                burst.append(toa)
-                break
-        else:
-            burst_starts.append([toa])
-
-    burst_starts = [np.concat(_) for _ in burst_starts if len(_) >= min_num_pulses]
-    bgs = []
-    for idx, bg in enumerate(burst_starts):
-        bgs.append(
-            df.filter(pl.col("toa").is_in(pl.Series(values=bg))).with_columns(
-                pl.Series("burst_group", [idx for _ in range(len(bg))]),
-            ),
+    df = df.with_columns(
+        pl.Series(burst_col, [-1 for _ in range(len(df))]),
+    ).sort(
+        time_col,
+    )
+    toas = df.select(time_col).to_numpy()
+    burst_group = 0
+    idx = 1
+    for idx, toa in enumerate(toas):
+        foo = df.filter(pl.col(burst_col) > -1).with_columns(
+            (toa - pri - pl.col(time_col)).abs().min().over(burst_col).alias("dist"),
         )
+        if (len(foo) == 0) or (foo["dist"].min() > tol):
+            df[idx, burst_col] = burst_group
+            burst_group += 1
+            continue
 
-    return pl.concat(bgs)
+        matching_group = foo.sort("dist").select(pl.first(burst_col)).item()
+        df[idx, burst_col] = matching_group
+
+    # now drop bursts of length 1 and reindex
+    df = df.filter(pl.len().over(burst_col) >= min_num_pulses)
+    return df.sort(burst_col)
 
 
 def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFrame:
