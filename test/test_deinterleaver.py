@@ -90,6 +90,24 @@ class TestPrecisePri(unittest.TestCase):
 
         data = pl.DataFrame(
             {
+                "toa": [4, 5, 7, 10, 12, 15, 32, 37],
+                "rf": [0, 1, 2, 3, 4, 5, 6, 7],
+            },
+        )
+        res = group_by_burst(data, 5, 0.5, 3)
+        assert_frame_equal(
+            res,
+            pl.DataFrame(
+                {
+                    "toa": [5, 10, 15],
+                    "rf": [1, 3, 5],
+                    "burst_group": [0, 0, 0],
+                },
+            ),
+        )
+
+        data = pl.DataFrame(
+            {
                 "toa": [5, 7, 10, 12, 15, 32, 37, 25, 30, 35],
                 "rf": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             },
