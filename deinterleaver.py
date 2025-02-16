@@ -74,7 +74,12 @@ def filter_by_pri(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFram
     )
 
 
-def find_burst_starts(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.DataFrame:
+def find_burst_starts(
+    df: pl.DataFrame,
+    pri: float,
+    tol: float = 0.1,
+    min_num_pulses: int = 5,
+) -> pl.DataFrame:
     toas = df.select("toa").to_numpy()
     last_toa = toas[0]
     burst_starts = [[last_toa]]
@@ -86,7 +91,7 @@ def find_burst_starts(df: pl.DataFrame, pri: float, tol: float = 0.1) -> pl.Data
         else:
             burst_starts.append([toa])
 
-    burst_starts = [np.concat(_) for _ in burst_starts]
+    burst_starts = [np.concat(_) for _ in burst_starts if len(_) >= min_num_pulses]
     bgs = []
     for idx, bg in enumerate(burst_starts):
         bgs.append(
