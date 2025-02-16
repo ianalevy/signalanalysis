@@ -76,7 +76,7 @@ class TestPrecisePri(unittest.TestCase):
                 "rf": [1, 2, 3, 4, 5, 6, 7],
             },
         )
-        res = find_burst_starts(data, 5, 0.5, 3)
+        res = group_by_burst(data, 5, 0.5, 3)
         assert_frame_equal(
             res,
             pl.DataFrame(
@@ -94,7 +94,7 @@ class TestPrecisePri(unittest.TestCase):
                 "rf": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             },
         )
-        res = find_burst_starts(data, 5, 0.5, 3)
+        res = group_by_burst(data, 5, 0.5, 3)
         assert_frame_equal(
             res,
             pl.DataFrame(
@@ -111,7 +111,7 @@ class TestPrecisePri(unittest.TestCase):
                 "rf": [1, 2, 3, 4, 5, 6, 7],
             },
         )
-        res = find_burst_starts(data, 5, 0.5, 2)
+        res = group_by_burst(data, 5, 0.5, 2)
         assert_frame_equal(
             res,
             pl.DataFrame(
@@ -119,6 +119,25 @@ class TestPrecisePri(unittest.TestCase):
                     "toa": [5, 10, 15, 7, 12, 32, 37],
                     "rf": [1, 3, 5, 2, 4, 6, 7],
                     "burst_group": [0, 0, 0, 1, 1, 2, 2],
+                },
+            ),
+        )
+
+        data = pl.DataFrame(
+            {
+                "toa": [10.5, 11.6, 15, 16.1, 17.2],
+                "rf": [1, 2, 3, 4, 5],
+            },
+        )
+        res = group_by_burst(data, 1.1, min_num_pulses=2)
+
+        assert_frame_equal(
+            res,
+            pl.DataFrame(
+                {
+                    "toa": [10.5, 11.6, 15, 16.1, 17.2],
+                    "rf": [1, 2, 3, 4, 5],
+                    "burst_group": [0, 0, 1, 1, 1],
                 },
             ),
         )
