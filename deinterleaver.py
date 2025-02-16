@@ -90,16 +90,23 @@ def group_by_burst(
     toas = df.select(time_col).to_numpy()
     for idx, toa in enumerate(toas):
         dist_col = "dist"
-        bursts_found = df.filter(pl.col(burst_col) > -1).with_columns(
-            (toa - pri - pl.col(time_col)).abs().min().over(burst_col).alias(dist_col),
+        bursts_found = (
+            df.filter(pl.col(burst_col) > -1)
+            .with_columns(
+                (toa - pri - pl.col(time_col))
+                .abs()
+                .min()
+                .over(burst_col)
+                .alias(dist_col),
+            )
+            .select(burst_col, dist_col)
         )
         if (len(bursts_found) == 0) or (bursts_found[dist_col].min() > tol):
             df[idx, burst_col] = max(df[burst_col]) + 1
         else:
-            matching_group = (
+            df[idx, burst_col] = (
                 bursts_found.sort(dist_col).select(pl.first(burst_col)).item()
             )
-            df[idx, burst_col] = matching_group
 
     return (
         df.filter(
