@@ -83,7 +83,7 @@ def group_by_burst(
     burst_col: str = "burst_group",
 ) -> pl.DataFrame:
     df = df.with_columns(
-        pl.Series(burst_col, [-1 for _ in range(len(df))]),
+        pl.lit(-1).alias(burst_col),
     ).sort(
         time_col,
     )
