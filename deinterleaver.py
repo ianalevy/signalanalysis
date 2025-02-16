@@ -1,3 +1,4 @@
+import numpy as np
 import polars as pl
 
 
@@ -103,8 +104,11 @@ def find_burst_starts(
         df[idx, burst_col] = matching_group
 
     # now drop bursts of length 1 and reindex
-    df = df.filter(pl.len().over(burst_col) >= min_num_pulses)
-    return df.sort(burst_col)
+    return (
+        df.filter(pl.len().over(burst_col) >= min_num_pulses)
+        .sort(burst_col)
+        .with_columns(pl.col(burst_col).rle_id().cast(pl.Int64))
+    )
 
 
 def group_by_burst(df: pl.DataFrame, pri: float, tol: float = 0.01) -> pl.DataFrame:
