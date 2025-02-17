@@ -87,8 +87,7 @@ def group_by_burst(
     ).sort(
         time_col,
     )
-    toas = df.select(time_col).to_numpy()
-    for idx, toa in enumerate(toas):
+    for idx, toa in enumerate(df.select(time_col).to_numpy()):
         dist_col = "dist"
         bursts_found = (
             df.filter(pl.col(burst_col) > -1)
