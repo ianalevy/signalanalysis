@@ -104,9 +104,9 @@ def group_by_burst(
         if (len(bursts_found) == 0) or (bursts_found[dist_col].min() > tol):
             df[idx, burst_col] = max(df[burst_col]) + 1
         else:
-            df[idx, burst_col] = (
-                bursts_found.sort(dist_col).select(pl.first(burst_col)).item()
-            )
+            df[idx, burst_col] = bursts_found.select(burst_col)[
+                bursts_found[dist_col].arg_min()
+            ].item()
 
     return (
         df.filter(
